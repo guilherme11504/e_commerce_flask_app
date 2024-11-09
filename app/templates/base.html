@@ -1,0 +1,128 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PDV Food Truck{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {%block css%}
+    {%endblock%}
+    <style>
+        /* Estilo do layout principal */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 220px; /* Diminuindo a largura da sidebar */
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            transition: all 0.3s; /* Transição suave */
+            overflow-y: auto; /* Permite rolagem se o conteúdo for muito longo */
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem; /* Ajustando o tamanho do título */
+            text-align: center;
+            margin-bottom: 20px; /* Espaçamento abaixo do título */
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 16px; /* Ajustando o tamanho da fonte dos links */
+            color: #ddd;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .content {
+            margin-left: 220px; /* Ajustando o espaço do conteúdo */
+            padding: 20px;
+            transition: margin-left 0.3s; /* Transição suave ao abrir/fechar */
+        }
+
+        .content.shift {
+            margin-left: 0; /* Ajusta o conteúdo ao abrir a sidebar */
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #007bff; /* Cor do botão */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            display: none; /* Oculta por padrão */
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -220px; /* Esconde a sidebar inicialmente */
+            }
+
+            .sidebar.active {
+                left: 0; /* Mostra a sidebar */
+            }
+
+            .content {
+                margin-left: 0; /* Ajusta o conteúdo ao abrir a sidebar */
+            }
+
+            .toggle-btn {
+                display: block; /* Exibe o botão em telas pequenas */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botão para alternar a sidebar -->
+    <button class="toggle-btn" id="toggleSidebar">☰</button>
+
+    <!-- Menu Lateral -->
+    <div class="sidebar" id="sidebar">
+        <h2>PDV Food Truck</h2>
+        <a href="{{ url_for('main_bp.produtos') }}">Produtos</a>
+        <a href="{{ url_for('main_bp.pedidos') }}">Pedidos</a>
+        <!-- Adicione mais links conforme necessário -->
+        <a href="{{ url_for('config_bp.config') }}"><i class="bi bi-gear"></i> Configurações</a>
+        <a href="{{ url_for('auth_bp.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <!-- Bloco para o conteúdo principal -->
+    <div class="content" id="content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script para alternar a sidebar
+        const toggleButton = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            content.classList.toggle('shift');
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+</body>
+</html>

@@ -1,0 +1,57 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.pedido {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pedido h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.pedido p {
+    margin: 5px 0;
+}
+
+.itens h3 {
+    font-size: 1.1em;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+.itens ul {
+    list-style-type: none;
+}
+
+.itens li {
+    background-color: #f1f1f1;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}

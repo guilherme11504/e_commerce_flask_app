@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Food Truck PDV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .central-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card-custom {
+            max-width: 500px;
+            width: 100%;
+        }
+        .error_message{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container central-container">
+    <div class="card card-custom shadow-lg p-4">
+        <h2 class="h4 text-center mb-4">Cadastro</h2>
+        
+        <form action="{{url_for('auth_bp.register_user')}}" method="POST" >
+            <div class="mb-3">
+                <label for="nome_completo" class="form-label">Nome Completo</label>
+                <input type="text" class="form-control" id="nome_completo" name="nome_completo" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome_usuario" class="form-label">Nome de Usuário</label>
+                <input type="text" class="form-control" id="nome_usuario" name="nome_usuario" required>
+            </div>
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" name="senha" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome_food_truck" class="form-label">Nome do Food Truck</label>
+                <input type="text" class="form-control" id="nome_food_truck" name="nome_food_truck" required>
+            </div>
+            
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
+        </form>
+        {%if error_message%}
+            <p class="error_message">{{error_message}}</p>
+        {%endif%}
+
+        <div class="text-center mt-3">
+            <p>Já tem uma conta? <a href="{{url_for('main_bp.login')}}">Faça login</a></p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

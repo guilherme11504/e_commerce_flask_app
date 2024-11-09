@@ -1,0 +1,57 @@
+* {
+    box-sizing: border-box; /* Inclui o padding e a borda no cálculo da largura e altura dos elementos */
+    margin: 0; /* Remove as margens padrão */
+    padding: 0; /* Remove o padding padrão */
+}
+
+body {
+    font-family: Arial, sans-serif; /* Define a fonte padrão */
+    background-color: #f8f9fa; /* Cor de fundo suave */
+    color: #333; /* Cor do texto */
+    display: flex; /* Utiliza flexbox para centralizar o conteúdo */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 100vh; /* Ocupa toda a altura da viewport */
+}
+
+.container {
+    text-align: center; /* Centraliza o texto dentro do contêiner */
+    padding: 30px; /* Espaçamento interno */
+    background: white; /* Cor de fundo branca */
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    max-width: 400px; /* Largura máxima do contêiner */
+    width: 90%; /* Largura mínima de 90% da tela */
+}
+
+h1 {
+    font-size: 24px; /* Tamanho da fonte do título */
+    margin-bottom: 20px; /* Margem inferior para espaçamento */
+    color: #007BFF; /* Cor azul para o título */
+}
+
+button {
+    padding: 15px 25px; /* Espaçamento interno dos botões */
+    background-color: #007BFF; /* Cor de fundo azul dos botões */
+    color: white; /* Cor do texto dos botões */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    font-size: 16px; /* Tamanho da fonte dos botões */
+    margin: 10px 0; /* Margens superior e inferior para espaçamento */
+    transition: background-color 0.3s ease; /* Efeito de transição suave para mudança de cor */
+}
+
+button:hover {
+    background-color: #0056b3; /* Cor do botão ao passar o mouse */
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 20px; /* Tamanho da fonte do título em telas menores */
+    }
+
+    button {
+        width: 100%; /* Botões ocupam 100% da largura em telas menores */
+    }
+}

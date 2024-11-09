@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Página Inicial do Totem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/totem_home.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo ao Nosso Totem!</h1>
+        <p>Escolha o que você deseja pedir e aproveite nossas delícias!</p>
+        <button id="newOrderBtn">Fazer Novo Pedido</button>
+    </div>
+    
+    <script src="{{url_for('static', filename='js/totem_home.js')}}"></script>
+</body>
+</html>

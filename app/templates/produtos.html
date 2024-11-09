@@ -1,0 +1,51 @@
+<!-- templates/lista_produtos.html -->
+{% extends 'base.html' %}
+
+{% block title %}Lista de Produtos{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Lista de Produtos</h2>
+        <a href="{{ url_for('main_bp.cadastrar_produto_page') }}" class="btn btn-primary mb-3">Cadastrar Novo Produto</a>
+        <a href="{{ url_for('main_bp.cadastrar_categorias_page') }}" class="btn btn-primary mb-3">Cadastrar Nova Categoria</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome do Produto</th>
+                    <th>Categoria</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os produtos cadastrados devem ser carregados aqui -->
+                {% for produto, categoria in produtos %}
+                <tr>
+                    <td>{{ produto.nome_produto }}</td>
+                    <td>{{ categoria.nome_categoria }}</td>
+                    <td>{{ produto.preco }}</td>
+                    <td>{{ produto.estoque }}</td>
+                    <td>
+                        <a href="{{ url_for('main_bp.editar_produto_page', id=produto.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <button class="btn btn-danger btn-sm" onclick="deletarProduto({{ produto.id }})">Deletar</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">Nenhum produto cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function deletarProduto(id) {
+            if (confirm('Tem certeza que deseja deletar este produto?')) {
+                // Aqui você deve fazer uma chamada AJAX ou redirecionar para a rota de deletar o produto
+                window.location.href = '/deletar_produto/' + id; // Exemplo de redirecionamento
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!-- templates/cadastro_categoria.html -->
+{% extends 'base.html' %}
+
+{% block title %}Cadastro de Categoria{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Cadastro de Categoria</h2>
+        <form action="{{ url_for('products_bp.register_categoria') }}" method="POST">
+            <div class="form-group">
+                <label for="nome_categoria">Nome da Categoria:</label>
+                <input type="text" class="form-control" id="nome_categoria" name="nome_categoria" required>
+            </div>
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar Categoria</button>
+        </form>
+
+        <!-- Seção de categorias já cadastradas -->
+        <div class="mt-5">
+            <h3>Categorias Cadastradas</h3>
+            <div class="list-group">
+                {% for categoria in categorias %}
+                <div class="list-group-item">
+                    <h5>{{ categoria.nome_categoria }}</h5>
+                    <p>{{ categoria.descricao }}</p>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhuma categoria cadastrada.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
