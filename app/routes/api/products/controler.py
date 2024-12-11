@@ -34,7 +34,7 @@ class Controler:
             db.session.rollback()
             return False
         
-    def register_product(self, nome_produto, preco, descricao, estoque, categoria, tempo_prep, imagens):
+    def register_product(self, nome_produto, preco, descricao, estoque, categoria, tempo_prep, imagens,cupons,itens_editaveis):
         from app.models import Produto
         user_hash = session['user_hash']
         product_hash = self.gerar_hash()  # Gere ou obtenha um ID único para o produto
@@ -71,6 +71,8 @@ class Controler:
                 preco=preco,
                 descricao=descricao,
                 estoque=estoque,
+                cupons=cupons,
+                editable_items=itens_editaveis,
                 categoria_id=categoria,
                 imagem_path=relative_path,  # Apenas o caminho da pasta
                 random_hash=product_hash,

@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request, session,current_app, flash
 from app.routes.main.controler import Controler
+from app.models import *
 
 controler = Controler()
 
@@ -28,7 +29,8 @@ def totem_home():
 
 @main_bp.route('/register', methods=['GET'])
 def register():
-    return render_template('register.html')
+    user_type = request.args.get('user_type')
+    return render_template('register.html',user_type=user_type)
 
 @main_bp.route('/main', methods=['GET'])
 def main():
@@ -45,20 +47,29 @@ def produtos():
 
 @main_bp.route('/cadastrar_produto_page', methods=['GET'])
 def cadastrar_produto_page():
-    categorias = controler.getCategories()
-    if not categorias:
-        error_message='Não foi possivel pegar as categorias'
-        return render_template('main.html', error_message=error_message)
-    return render_template('cadastro_produto.html', categorias=categorias)
+    try:
+        user_hash = session['user_hash']
+        categorias = controler.getCategories()
+        produtos = controler.getallprodutos(user_hash)
+        return render_template('cadastro_produto.html', categorias=categorias,produtos=produtos)
+    except:
+        flash('Ocorreu um erro ao carregar a página')
+        return render_template('produtos.html')
 
 @main_bp.route('/cadastrar_categorias_page', methods=['GET'])
 def cadastrar_categorias_page():
-    categorias = controler.getCategories()
-    if not categorias:
-        error_message='Não foi possivel pegar as categorias'
-        return render_template('main.html', error_message=error_message)
-    return render_template('cadastro_categoria.html', categorias=categorias)
+    try:
+        categorias = controler.getCategories()
+        return render_template('cadastro_categoria.html', categorias=categorias)
+    except:
+        flash('Ocorreu um erro ao carregar a página')
+        return render_template('produtos.html')
 
 @main_bp.route('/editar_produto_page', methods=['GET'])
 def editar_produto_page():
-    return render_template('index.html')
+    user_hash = session['user_hash']
+    product_hash = request.args.get('product_hash')
+    product = controler.get_product(product_hash)
+    categorias = controler.getCategories()
+    produtos = controler.getallprodutos(user_hash)
+    return render_template('edit_product.html',produto=product,categorias=categorias,produtos=produtos)

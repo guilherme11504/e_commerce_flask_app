@@ -12,9 +12,10 @@ controler = Controler()
 def config():
     from app.models import Vendedor
     if request.method == 'POST':
+        nome = request.form['name']
+        email = request.form['email']
         user_data = {
-            'name': request.form['name'],
-            'email': request.form['email'],
+            'nome_completo':nome, 'email':email
         }
         if controler.update_user_data(user_data):
             flash('Dados atualizados com sucesso!', 'success')

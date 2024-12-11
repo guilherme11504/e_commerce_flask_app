@@ -17,7 +17,7 @@
             width: 100%;
         }
 
-        .error_message{
+        .alert{
             color: red;
         }
         
@@ -43,9 +43,18 @@
                 <button type="submit" class="btn btn-primary">Entrar</button>
             </div>
         </form>
-        {%if error_message%}
-            <p class="error_message">{{error_message}}</p>
-        {%endif%}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
     </div>
 </div>

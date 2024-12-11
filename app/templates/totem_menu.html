@@ -57,7 +57,7 @@
                             <h5 class="card-title">{{ produto.nome_produto }}</h5>
                             <p class="card-text">{{ produto.descricao }}</p>
                             <p class="card-text text-success">R$ {{ produto.preco }}</p>
-                            <button class="btn btn-primary" onclick="showProductModal({{ produto.id }}, '{{ produto.nome_produto }}', {{ produto.preco }})">Adicionar ao Carrinho</button>
+                            <button class="btn btn-primary" onclick="showProductModal({{ produto.random_hash }}, '{{ produto.nome_produto }}', {{ produto.preco }}, {{produto.editable_items}})">Adicionar ao Carrinho</button>
                         </div>
                     </div>
                 </div>
@@ -172,7 +172,21 @@
                 alert("O carrinho está vazio!");
                 return;
             }
-            alert("Compra finalizada com sucesso!");
+            //faz o fetch para o backend
+            fetch('/finalizar_compra', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart)
+            }).then(response => {
+                if (response.ok) {
+                    alert("Compra finalizada com sucesso!");
+                    clearCart();
+                } else {
+                    alert("Erro ao finalizar a compra!");
+                }
+            });
             cart = [];
             total = 0;
             updateCart();

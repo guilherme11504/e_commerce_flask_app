@@ -8,6 +8,18 @@
         <h2>Lista de Produtos</h2>
         <a href="{{ url_for('main_bp.cadastrar_produto_page') }}" class="btn btn-primary mb-3">Cadastrar Novo Produto</a>
         <a href="{{ url_for('main_bp.cadastrar_categorias_page') }}" class="btn btn-primary mb-3">Cadastrar Nova Categoria</a>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -19,7 +31,6 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Os produtos cadastrados devem ser carregados aqui -->
                 {% for produto, categoria in produtos %}
                 <tr>
                     <td>{{ produto.nome_produto }}</td>
@@ -27,7 +38,7 @@
                     <td>{{ produto.preco }}</td>
                     <td>{{ produto.estoque }}</td>
                     <td>
-                        <a href="{{ url_for('main_bp.editar_produto_page', id=produto.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ url_for('main_bp.editar_produto_page', product_hash=produto.random_hash) }}" class="btn btn-warning btn-sm">Editar</a>
                         <button class="btn btn-danger btn-sm" onclick="deletarProduto({{ produto.id }})">Deletar</button>
                     </td>
                 </tr>

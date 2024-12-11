@@ -1,0 +1,107 @@
+<!-- templates/editar_produto.html -->
+{% extends 'base.html' %}
+
+{% block title %}Editar Produto{% endblock %}
+
+{%block css%}
+{%endblock%}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Editar Produto</h2>
+        <form action="{{ url_for('products_bp.edit_product', product_id=produto.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="nome_produto">Nome do Produto:</label>
+                <input type="text" class="form-control" id="nome_produto" name="nome_produto" value="{{ produto.nome_produto }}" required>
+            </div>
+            <div class="form-group">
+                <label for="preco">Preço:</label>
+                <input type="number" class="form-control" id="preco" name="preco" step="0.01" value="{{ produto.preco }}" required>
+            </div>
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ produto.descricao }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="estoque">Estoque:</label>
+                <input type="number" class="form-control" id="estoque" name="estoque" value="{{ produto.estoque }}" required>
+            </div>
+            <div class="form-group">
+                <label for="categoria_id">Categoria:</label>
+                <select class="form-control" id="categoria_id" name="categoria_id" required>
+                    <option value="">Selecione uma Categoria</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if categoria.id == produto.categoria_id %}selected{% endif %}>
+                        {{ categoria.nome_categoria }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="imagens">Imagens do Produto (até 5):</label>
+                <input type="file" class="form-control-file" id="imagens" name="imagens" accept="image/*" multiple>
+                <small class="form-text text-muted">Deixe em branco para manter as imagens atuais.</small>
+            </div>
+            <div class="form-group">
+                <label for="tempo_preparo">Tempo de Preparo (min):</label>
+                <input type="number" class="form-control" id="tempo_preparo" name="tempo_preparo" value="{{ produto.tempo_preparo }}">
+            </div>
+            
+            <!-- Itens Editáveis -->
+            <div class="form-group">
+                <label>Itens Editáveis (Ingredientes):</label>
+                <div id="itens-editaveis-container">
+                    {% for item in produto.editable_items %}
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" name="itens_editaveis[]" value="{{ item }}" placeholder="Ingrediente">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger remove-ingrediente">Remover</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary" id="adicionar-ingrediente">Adicionar Ingrediente</button>
+            </div>
+            
+            <!-- Cupons -->
+            <div class="form-group">
+                <label for="cupons">Cupons (Sugestões de Acompanhamento):</label>
+                <select class="form-control" id="cupons" name="cupons[]" multiple>
+                    {% for produto in produtos %}
+                    <option value="{{ produto.random_hash }}" {% if produto.random_hash in produto.cupons %}selected{% endif %}>
+                        {{ produto.nome_produto }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small class="form-text text-muted">Segure CTRL (ou CMD) para selecionar vários.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Adicionar novo campo de ingrediente
+            document.getElementById('adicionar-ingrediente').addEventListener('click', function () {
+                const container = document.getElementById('itens-editaveis-container');
+                const newField = document.createElement('div');
+                newField.className = 'input-group mb-2';
+                newField.innerHTML = `
+                    <input type="text" class="form-control" name="itens_editaveis[]" placeholder="Ingrediente">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-danger remove-ingrediente">Remover</button>
+                    </div>
+                `;
+                container.appendChild(newField);
+            });
+
+            // Remover campo de ingrediente
+            document.getElementById('itens-editaveis-container').addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-ingrediente')) {
+                    e.target.closest('.input-group').remove();
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -29,6 +29,9 @@ def create_app():
     from app.routes.api.config.views import config_bp
     from app.routes.api.totem.views import totem_bp
     from app.routes.api.payments.views import payments_bp
+    from app.routes.api.buyer.views import buyer_bp
+    
+    app.register_blueprint(buyer_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(products_bp)
     app.register_blueprint(main_bp)

@@ -6,7 +6,7 @@ import json
 import qrcode
 import io
 import base64
-
+import random
 controler = Controler()
 
 payments_bp = Blueprint('payments_bp', __name__)
@@ -70,4 +70,10 @@ def generate_qr():
             return jsonify({"error": "URL do QR Code não encontrada na resposta."}), 400
     else:
         return jsonify({"error": "Erro na requisição para o MercadoPago.", "details": response.text}), response.status_code
+    
+@payments_bp.route('/finalizar_compra', methods=['POST'])
+def finalizar_compra():
+    data = request.json
+    print(data)
+    return jsonify(data), 200
 

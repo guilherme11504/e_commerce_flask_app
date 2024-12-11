@@ -26,12 +26,16 @@
             <div class="form-group">
                 <label for="categoria_id">Categoria:</label>
                 <select class="form-control" id="categoria_id" name="categoria_id" required>
-                    <option value="">Selecione uma Categoria</option>
+                    <option value="" disabled selected>Selecione uma Categoria</option>
+                    {% if categorias %}
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id }}">{{ categoria.nome_categoria }}</option>
                     {% endfor %}
+                    {% endif %}
+                    <option value="nova_categoria" style="font-weight: bold;">+ Cadastrar nova Categoria</option>
                 </select>
             </div>
+            
             <div class="form-group">
                 <label for="imagens">Imagens do Produto (até 5):</label>
                 <input type="file" class="form-control-file" id="imagens" name="imagens" accept="image/*" multiple>
@@ -40,7 +44,69 @@
                 <label for="tempo_preparo">Tempo de Preparo (min):</label>
                 <input type="number" class="form-control" id="tempo_preparo" name="tempo_preparo">
             </div>
+            
+            <!-- Itens Editáveis -->
+            <div class="form-group">
+                <label>Itens Editáveis (Ingredientes):</label>
+                <div id="itens-editaveis-container">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" name="itens_editaveis[]" placeholder="Ingrediente">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger remove-ingrediente">Remover</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" id="adicionar-ingrediente">Adicionar Ingrediente</button>
+            </div>
+            
+            <!-- Cupons -->
+            <div class="form-group">
+                <label for="cupons">Cupons (Sugestões de Acompanhamento):</label>
+                <select class="form-control" id="cupons" name="cupons[]" multiple>
+                    {% if produtos%}
+                        {% for produto in produtos %}
+                        <option value="{{ produto.random_hash }}">{{ produto.nome_produto }}</option>
+                        {% endfor %}
+                    {%endif%}
+                </select>
+                <small class="form-text text-muted">Segure CTRL (ou CMD) para selecionar vários.</small>
+            </div>
+
             <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Adicionar novo campo de ingrediente
+            document.getElementById('adicionar-ingrediente').addEventListener('click', function () {
+                const container = document.getElementById('itens-editaveis-container');
+                const newField = document.createElement('div');
+                newField.className = 'input-group mb-2';
+                newField.innerHTML = `
+                    <input type="text" class="form-control" name="itens_editaveis[]" placeholder="Ingrediente">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-danger remove-ingrediente">Remover</button>
+                    </div>
+                `;
+                container.appendChild(newField);
+            });
+
+            // Remover campo de ingrediente
+            document.getElementById('itens-editaveis-container').addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-ingrediente')) {
+                    e.target.closest('.input-group').remove();
+                }
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('categoria_id').addEventListener('change', function() {
+            if (this.value === 'nova_categoria') {
+                // Redireciona para a página de cadastro de categorias
+                window.location.href = "{{ url_for('main_bp.cadastrar_categorias_page') }}";
+            }
+        });
+    </script>
 {% endblock %}
+
