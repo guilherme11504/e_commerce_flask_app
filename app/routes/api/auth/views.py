@@ -8,19 +8,23 @@ auth_bp = Blueprint('auth_bp', __name__)
 
 @auth_bp.route('/register_user', methods=['POST'])
 def register_user():
-        print(request.files)
-        user_profile_picture = request.files.get('profile_picture')
-        user_type = request.form.get('user_type')
-        nome_completo = request.form.get('nome_completo')
-        email = request.form.get('email')
-        nome_usuario = request.form.get('nome_usuario')
-        senha = request.form.get('senha')
-        nome_food_truck = request.form.get('nome_food_truck', None)
-        result = controler.register_user(nome_completo,email,nome_usuario,senha,nome_food_truck,user_type,user_profile_picture)
-        if not result:
-            error_message = 'Erro ao registrar usuario, tente novamente'
-            return render_template('register.html', error_message=error_message)
-        return redirect('login')
+    print(request.form.to_dict())
+    user_profile_picture = request.files.get('profile_picture')
+    user_type = request.form.get('user_type')
+    nome_completo = request.form.get('nome_completo')
+    email = request.form.get('email')
+    senha = request.form.get('senha')
+    nome_loja = request.form.get('nome_loja', None)
+    categoria_id = request.form.get('categorias_select', None)  # Apenas o ID da categoria
+    
+    # Passando categoria_id
+    result = controler.register_user(nome_completo, email, senha, nome_loja, user_type, user_profile_picture, categoria_id)
+    
+    if not result:
+        error_message = 'Erro ao registrar usuario, tente novamente'
+        return render_template('register.html', error_message=error_message)
+    return redirect('login')
+
 
 @auth_bp.route('/login_user', methods=['POST'])
 def login_user():
@@ -48,12 +52,8 @@ def login_totem():
 
 @auth_bp.route('/logout', methods=['GET'])
 def logout():
-    if session.get('user_hash'):
-        session.pop('user_hash')
-    if session.get('totem_hash'):
-        session.pop('totem_hash')
-    if session.get('user_type'):
-        session.pop('user_type')
+    #LIMPA TUDO DA SESSÃO
+    session.clear()
     return render_template('index.html')
 
 

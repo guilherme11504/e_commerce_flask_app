@@ -6,14 +6,57 @@
     <link rel="stylesheet" href="style.css">
     <title>Selecione a Opção</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/select_option.css') }}">
+    <style>
+        .optionBtn {
+            background-color: #aaa9a9;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .optionBtn.selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Você vai comer aqui ou levar?</h1>
-        <button id="eatHereBtn">Comer Aqui</button>
-        <button id="takeAwayBtn">Levar</button>
+
+    <div class="content">
+        <div class="container">
+            <h1>Diga-nos seu nome!</h1>
+            <p>quando seu pedido estiver pronto, iremos te chamar pelo nome!</p>
+            <input type="text" id="clientName" placeholder="Digite seu nome">
+        </div>
+        <div class="container">
+            <h1>Você vai comer aqui ou levar?</h1>
+            <button id="eatHereBtn" class="optionBtn">Comer Aqui</button>
+            <button id="takeAwayBtn" class="optionBtn">Levar</button>
+        </div>
+    
+        <!--botão para acionar o listener e ir para a proxima pagina-->
+        <button id="nextBtn" onclick="nextScreen()">Próximo</button>
     </div>
     
     <script src="{{ url_for('static', filename='js/selecionar_opcao.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.optionBtn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttons.forEach(btn => btn.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
 </body>
 </html>

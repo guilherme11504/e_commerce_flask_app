@@ -4,21 +4,21 @@ import json
 url = "https://api.mercadopago.com/instore/orders/qr/seller/collectors/2075683624/pos/12345678/qrs"
 
 payload = {
-    "external_reference": "reference_12345",
-    "title": "Product order",
+    "external_reference": "20000012233434455",
+    "title": "projetinho",
     "description": "Purchase description.",
-    "notification_url": "https://348f-2804-14c-e8-337d-9591-d582-d791-2437.ngrok-free.app/notifications",
-    "total_amount": 100,
+    "notification_url": "https://0325-2804-14c-e8-337d-d947-3083-f8bc-bcfa.ngrok-free.app/notifications",
+    "total_amount": 10,
     "items": [
         {
             "sku_number": "A123K9191938",
             "category": "marketplace",
             "title": "Point Mini",
             "description": "This is the Point Mini",
-            "unit_price": 100,
+            "unit_price": 10,
             "quantity": 1,
             "unit_measure": "unit",
-            "total_amount": 100
+            "total_amount": 10
         }
     ],
     "sponsor": {

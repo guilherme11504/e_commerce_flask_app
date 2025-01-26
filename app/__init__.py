@@ -30,6 +30,7 @@ def create_app():
     from app.routes.api.totem.views import totem_bp
     from app.routes.api.payments.views import payments_bp
     from app.routes.api.buyer.views import buyer_bp
+    from app.routes.api.orders.views import orders_bp
     
     app.register_blueprint(buyer_bp)
     app.register_blueprint(auth_bp)
@@ -38,4 +39,5 @@ def create_app():
     app.register_blueprint(config_bp)
     app.register_blueprint(totem_bp)
     app.register_blueprint(payments_bp)
+    app.register_blueprint(orders_bp)
     return app

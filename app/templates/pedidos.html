@@ -1,41 +1,348 @@
-{%extends 'base.html' %}
-    {%block css%}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/pedidos.css') }}">
-    {%endblock%}
+{% extends 'base.html' %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pedidos.css') }}">
+<style>
 
-    {%block content%}
-    <div class="container">
-        <h1>Pedidos Pendentes e em Preparação</h1>
+    .verde {
+        background-color: rgba(0, 128, 0, 0.1);
+        border-color: green;
+    }
+    .laranja {
+        background-color: rgba(255, 165, 0, 0.1);
+        border-color: orange;
+    }
+    .vermelho {
+        background-color: rgba(255, 0, 0, 0.1);
+        border-color: red;
+    }
 
-        <div class="pedido">
-            <h2>Pedido #12345</h2>
-            <p><strong>Cliente:</strong> João da Silva</p>
-            <p><strong>Observações:</strong> Sem cebola, por favor.</p>
-            <p><strong>Status:</strong> Em preparação</p>
+    .pedido {
+        padding: 10px;
+        background-color: #f9f9f9;
+        margin: 15px 0;
+        border-radius: 5px;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+        position: relative;
+        width: 100%;
+    }
 
-            <div class="itens">
-                <h3>Itens do Pedido</h3>
-                <ul>
-                    <li>Produto: Hambúrguer X - Quantidade: 2 - Preço: R$20,00</li>
-                    <li>Produto: Refrigerante - Quantidade: 1 - Preço: R$5,00</li>
-                </ul>
-            </div>
+    .pedido h2 {
+        margin-top: 0;
+    }
+
+    .pedido .contador-tempo {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: #333;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background-color: #ccc;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    .progress-bar .progress {
+        height: 100%;
+        border-radius: 5px;
+        background-color: green;
+    }
+
+    .pedido:hover {
+        transform: scale(1.05);
+    }
+
+    /* Estilos para os botões */
+    .pedido-buttons {
+        margin-top: 15px;
+    }
+
+    .pedido-buttons button {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .pedido-buttons .btn-pronto {
+        background-color: green;
+        color: white;
+    }
+
+    .pedido-buttons .btn-andamento {
+        background-color: orange;
+        color: white;
+    }
+
+    .pedido-buttons .btn-Pendente {
+        background-color: gray;
+        color: white;
+    }
+
+    .pedido-buttons .btn-Cancelar {
+        background-color: red;
+        color: white;
+    }
+
+    /* Efeito de hover nos botões */
+    .pedido-buttons button:hover {
+        opacity: 0.8;
+    }
+
+    /* Estilos do Subcard de Produto */
+    .subcard-produto {
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        padding: 15px;
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .subcard-produto img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .subcard-produto .detalhes-produto {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .container{
+        margin: 0;
+        width: 100%;
+    }
+   
+    .content{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
         </div>
-
-        <div class="pedido">
-            <h2>Pedido #12346</h2>
-            <p><strong>Cliente:</strong> Maria Oliveira</p>
-            <p><strong>Observações:</strong> Sem observações.</p>
-            <p><strong>Status:</strong> Pendente</p>
-
-            <div class="itens">
-                <h3>Itens do Pedido</h3>
-                <ul>
-                    <li>Produto: Pizza Margherita - Quantidade: 1 - Preço: R$25,00</li>
-                    <li>Produto: Suco de Laranja - Quantidade: 2 - Preço: R$8,00</li>
-                </ul>
-            </div>
-        </div>
-
+        {% endif %}
+        {% endwith %}
     </div>
-    {%endblock%}
+    <h1>Pedidos Pendentes e em Preparação</h1>
+
+    <!-- Lista de pedidos separados por Pronto, em preparação e Pendente-->
+     <div class="containerPedidos">
+            <div class="columnPending">
+                {% for pedido in pedidos %}
+                {%if pedido.status == 'Pendente'%}
+                <div class="pedido" data-order-id="{{ pedido.order_id }}">
+                    <h2>Pedido #{{ pedido.order_id }}</h2>
+                    <p><strong>Cliente:</strong> {{ pedido.comprador_nome }}</p>
+                    <p><strong>Observações:</strong> {{ pedido.observacoes }}</p>
+                    <p><strong>Status:</strong> {{ pedido.status }}</p>
+                    <p><strong>Valor Total:</strong> R${{ pedido.total_pedido }}</p>
+                    <p><strong>Data do Pedido:</strong> <span class="pedido-data">{{ pedido.data_criacao }}</span>
+
+                    <div class="itens">
+                        <h3>Itens do Pedido</h3>
+                        <ul>
+                            {% for item in pedido.produtos %}
+                            <div class="subcard-produto">
+                                <img src="{{ item.product_image }}" alt="Imagem do Produto">
+                                <div class="detalhes-produto">
+                                    <p><strong>Produto:</strong> {{ item.nome_produto }}</p>
+                                    <p><strong>Quantidade:</strong> {{ item.quantidade }}</p>
+                                    <p><strong>Preço:</strong> R${{ item.preco_unitario * item.quantidade }}</p>
+                                    <p><strong>Tempo de preparo:</strong> {{ item.tempo_preparo }} minutos</p>
+                                    <p><strong>Itens editáveis:</strong> {{ item.editable_items | join(", ") }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Barra de progresso e contador -->
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%;"></div>
+                    </div>
+                    <p class="contador-tempo">Tempo em preparo: <span class="contador">0</span> minutos</p>
+
+                    <!-- Botões de controle -->
+                    <div class="pedido-buttons">
+                        <button class="btn-pronto" 
+                                onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Pronto') }}'">
+                            Marcar como Pronto
+                        </button>
+
+                        <button class="btn-andamento" 
+                                onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Em andamento') }}'">
+                            Marcar como Preparando
+                        </button>
+                        <button class="btn-Pendente" 
+                                onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Pendente') }}'">
+                            Marcar como Pendente
+                        </button>
+                        <button class="btn-Cancelar" 
+                                onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Cancelado') }}'">
+                            Cancelar Pedido
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+        {% endfor %}
+        </div>
+        <div class="columnPreparing">
+            {% for pedido in pedidos %}
+            {%if pedido.status == 'Em andamento'%}
+            <div class="pedido" data-order-id="{{ pedido.order_id }}">
+                <h2>Pedido #{{ pedido.order_id }}</h2>
+                <p><strong>Cliente:</strong> {{ pedido.comprador_nome }}</p>
+                <p><strong>Observações:</strong> {{ pedido.observacoes }}</p>
+                <p><strong>Status:</strong> {{ pedido.status }}</p>
+                <p><strong>Valor Total:</strong> R${{ pedido.total_pedido }}</p>
+                <p><strong>Data do Pedido:</strong> <span class="pedido-data">{{ pedido.data_criacao }}</span>
+
+                <div class="itens">
+                    <h3>Itens do Pedido</h3>
+                    <ul>
+                        {% for item in pedido.produtos %}
+                        <div class="subcard-produto">
+                            <img src="{{ item.product_image }}" alt="Imagem do Produto">
+                            <div class="detalhes-produto">
+                                <p><strong>Produto:</strong> {{ item.nome_produto }}</p>
+                                <p><strong>Quantidade:</strong> {{ item.quantidade }}</p>
+                                <p><strong>Preço:</strong> R${{ item.preco_unitario * item.quantidade }}</p>
+                                <p><strong>Tempo de preparo:</strong> {{ item.tempo_preparo }} minutos</p>
+                                <p><strong>Itens editáveis:</strong> {{ item.editable_items | join(", ") }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Barra de progresso e contador -->
+                <div class="progress-bar">
+                    <div class="progress" style="width: 0%;"></div>
+                </div>
+                <p class="contador-tempo">Tempo em preparo: <span class="contador">0</span> minutos</p>
+
+                <!-- Botões de controle -->
+                <div class="pedido-buttons">
+                    <button class="btn-pronto" 
+                            onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Pronto') }}'">
+                        Marcar como Pronto
+                    </button>
+
+                    <button class="btn-andamento" 
+                            onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Em andamento') }}'">
+                        Marcar como Preparando
+                    </button>
+                    <button class="btn-Pendente" 
+                            onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Pendente') }}'">
+                        Marcar como Pendente
+                    </button>
+                    <button class="btn-Cancelar" 
+                            onclick="window.location.href='{{ url_for('orders_bp.change_order_status', order_id=pedido.order_id, status='Cancelado') }}'">
+                        Cancelar Pedido
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+    {% endfor %}
+        </div>
+     </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const pedidos = document.querySelectorAll(".pedido");
+
+    pedidos.forEach(pedido => {
+        const dataPedidoEl = pedido.querySelector(".pedido-data");
+        const contadorEl = pedido.querySelector(".contador");
+        const progressBar = pedido.querySelector(".progress-bar .progress");
+
+        if (!dataPedidoEl || !contadorEl || !progressBar) {
+            console.error("Faltando elementos essenciais no pedido:", pedido);
+            return;
+        }
+
+        // Converte a data do formato brasileiro para ISO (YYYY-MM-DDTHH:mm:ss)
+        const dataPedidoTexto = dataPedidoEl.textContent.trim();
+        const [data, hora] = dataPedidoTexto.split(" ");
+        const [dia, mes, ano] = data.split("-");
+        const dataPedido = new Date(`${ano}-${mes}-${dia}T${hora}`);
+
+        if (isNaN(dataPedido)) {
+            console.error("Data do pedido inválida:", dataPedidoTexto);
+            return;
+        }
+
+        // Soma os tempos de preparo de todos os itens do pedido
+        const temposPreparo = [...pedido.querySelectorAll(".subcard-produto .detalhes-produto p")]
+            .filter(p => p.textContent.includes("Tempo de preparo:"))
+            .map(p => parseInt(p.textContent.match(/\d+/)?.[0] || 0, 10));
+
+        const tempoTotalPreparo = temposPreparo.reduce((total, tempo) => total + tempo, 0);
+
+        if (tempoTotalPreparo <= 0) {
+            console.error("Tempo de preparo inválido:", temposPreparo);
+            return;
+        }
+
+        const atualizarTempo = () => {
+            const agora = new Date();
+            const tempoDecorrido = Math.floor((agora - dataPedido) / (1000 * 60)); // Tempo decorrido em minutos
+            contadorEl.textContent = `${tempoDecorrido} minutos`;
+
+            // Atualiza a barra de progresso
+            const percentualProgresso = Math.min((tempoDecorrido / tempoTotalPreparo) * 100, 100);
+            progressBar.style.width = `${percentualProgresso}%`;
+
+            pedido.classList.remove("verde", "laranja", "vermelho");
+            if (tempoDecorrido <= tempoTotalPreparo * 0.5) {
+                pedido.classList.add("verde");
+            } else if (tempoDecorrido <= tempoTotalPreparo) {
+                pedido.classList.add("laranja");
+            } else {
+                pedido.classList.add("vermelho");
+            }
+
+
+            // Define a cor do card com base no progresso
+            let cor = "";
+            if (tempoDecorrido <= tempoTotalPreparo * 0.5) {
+                cor = "rgba(0, 128, 0, 0.1)"; // Verde claro com 10% de opacidade
+            } else if (tempoDecorrido <= tempoTotalPreparo) {
+                cor = "rgba(255, 165, 0, 0.1)"; // Laranja claro com 10% de opacidade
+            } else {
+                cor = "rgba(255, 0, 0, 0.1)"; // Vermelho claro com 10% de opacidade
+            }
+            pedido.style.backgroundColor = cor;
+            pedido.style.backgroundColor = cor + "10"; // 10% de opacidade
+        };
+
+        atualizarTempo(); // Chamada inicial
+        setInterval(atualizarTempo, 60000); // Atualiza a cada minuto
+    });
+});
+
+    </script>
+    
+
+{% endblock %}

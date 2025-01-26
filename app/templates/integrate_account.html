@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrate Account</title>
+</head>
+<body>
+    <h1>Integrate Your Account with Mercado Pago</h1>
+        <button onclick="redirect()">Integrar com o Mercado Pago</button>
+
+    <script>
+        function redirect() {
+            window.location.href = "https://auth.mercadopago.com/authorization?client_id=8041984352821246&response_type=code&platform_id=mp&redirect_uri=https://quick-krill-endless.ngrok-free.app/callback";
+        }
+    </script>
+</body>
+</html>

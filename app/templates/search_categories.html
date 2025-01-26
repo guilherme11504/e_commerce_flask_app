@@ -1,0 +1,29 @@
+{%extends 'buyer_header.html'%}
+
+{%block head%}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/search_categories.css') }}">
+{%endblock%}
+
+{%block content%}
+<!-- Container principal -->
+<div class="ContentContainer">
+    <div class="categoriaInfo">
+        <h1 id="categoriaName">{{ categoria.nome_categoria }}</h1>
+    </div>
+    <div class="sellersContainer">
+        {% for seller in sellers %}
+        <div class="singleSeller">
+            <div class="sellerImage">
+                <img src="{{ url_for('static',filename=seller.profile_image_path) }}" alt="Seller Image">
+            </div>
+            <div class="sellerInfo">
+                <h3>{{ seller.nome_loja }}</h3>
+                <p>Rating: {{ seller.rating }} / 5</p>
+                <p>Total Products: {{ seller.total_products }}</p>
+                <a href="{{ url_for('buyer_bp.seller_store',seller_hash=seller.random_hash) }}" class="btn btn-primary">Visit Store</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{%endblock%}

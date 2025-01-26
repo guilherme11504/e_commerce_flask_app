@@ -86,6 +86,51 @@ class Controler:
             print(f'Erro ao inserir produto: {e}')
             db.session.rollback()
 
+    def edit_product(self, nome_produto, preco, descricao, estoque, categoria, tempo_prep, imagens, cupons, itens_editaveis, product_id):
+        from app.models import Produto
+        user_hash = session['user_hash']
+
+        # Diretório relativo a partir de 'static'
+        relative_path = f'user_products/{user_hash}/{product_id}'
+        # Caminho absoluto para o diretório do produto
+        base_dir = Path(current_app.config['BASE_DIR']) / 'app' / 'static' / relative_path
+        
+        # Criar o diretório se ele não existir
+        if not os.path.exists(base_dir):
+            try:
+                os.makedirs(base_dir)
+                print(f"Diretório criado com sucesso: {base_dir}")
+            except Exception as e:
+                print(f"Erro ao criar o diretório: {e}")
+                return False
+
+        # Salvando as imagens no diretório criado
+        for imagem in imagens:
+            if imagem and imagem.filename != '':
+                filename = secure_filename(imagem.filename)
+                try:
+                    imagem.save(base_dir / filename)
+                    print(f"Imagem salva com sucesso: {base_dir / filename}")
+                except Exception as e:
+                    print(f"Erro ao salvar a imagem {filename}: {e}")
+                    return False
+
+        try:
+            produto = Produto.query.filter_by(random_hash=product_id).first()
+            produto.nome_produto = nome_produto
+            produto.preco = preco
+            produto.descricao = descricao
+            produto.estoque = estoque
+            produto.cupons = cupons
+            produto.editable_items = itens_editaveis
+            produto.categoria_id = categoria
+            produto.tempo_preparo = tempo_prep
+            db.session.commit()
+            return True
+        except Exception as e:
+            print(f'Erro ao editar produto: {e}')
+            db.session.rollback()
+            return False
 
 
 

@@ -3,14 +3,15 @@
 
 {% block title %}Editar Produto{% endblock %}
 
-{%block css%}
-{%endblock%}
+{% block css %}
+{% endblock %}
 
 {% block content %}
     <div class="container mt-5">
         <h2>Editar Produto</h2>
         <form action="{{ url_for('products_bp.edit_product', product_id=produto.id) }}" method="POST" enctype="multipart/form-data">
             <div class="form-group">
+                <input type="hidden" name="product_id" value="{{produto.random_hash}}">
                 <label for="nome_produto">Nome do Produto:</label>
                 <input type="text" class="form-control" id="nome_produto" name="nome_produto" value="{{ produto.nome_produto }}" required>
             </div>
@@ -41,6 +42,15 @@
                 <label for="imagens">Imagens do Produto (até 5):</label>
                 <input type="file" class="form-control-file" id="imagens" name="imagens" accept="image/*" multiple>
                 <small class="form-text text-muted">Deixe em branco para manter as imagens atuais.</small>
+            </div>
+            <!-- Preview das imagens já enviadas e novas imagens -->
+            <div class="form-group" id="image-preview-container">
+                {% for imagem in produto|get_all_images_path %}
+                    <div class="image-preview" data-image="{{ imagem }}">
+                        <img src="{{ url_for('static', filename=imagem) }}" class="img-thumbnail" width="100">
+                        <button type="button" class="btn btn-danger remove-image-btn">Excluir</button>
+                    </div>
+                {% endfor %}
             </div>
             <div class="form-group">
                 <label for="tempo_preparo">Tempo de Preparo (min):</label>
@@ -100,6 +110,71 @@
             document.getElementById('itens-editaveis-container').addEventListener('click', function (e) {
                 if (e.target.classList.contains('remove-ingrediente')) {
                     e.target.closest('.input-group').remove();
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputFile = document.getElementById('imagens');
+            const previewContainer = document.getElementById('image-preview-container');
+
+            // Exibir o preview das imagens selecionadas
+            inputFile.addEventListener('change', function (e) {
+                const files = e.target.files;
+
+                // Limpar o preview de imagens anteriores
+                previewContainer.innerHTML = '';
+
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = event.target.result;
+                        imgElement.classList.add('img-thumbnail');
+                        imgElement.width = 100;
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.classList.add('btn', 'btn-danger', 'remove-image-btn');
+                        deleteButton.innerText = 'Excluir';
+
+                        const div = document.createElement('div');
+                        div.classList.add('image-preview');
+                        div.appendChild(imgElement);
+                        div.appendChild(deleteButton);
+                        
+                        previewContainer.appendChild(div);
+
+                        // Marcar para exclusão no backend quando o botão for clicado
+                        deleteButton.addEventListener('click', function () {
+                            div.remove();
+                            // Aqui, podemos marcar que esta imagem precisa ser removida do sistema
+                            // Enviar essa informação de exclusão para o backend, caso necessário
+                            console.log('Imagem removida do preview');
+                            // Se precisar enviar para o backend, você pode fazer uma requisição AJAX
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Excluir imagens existentes
+            previewContainer.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-image-btn')) {
+                    const imageDiv = e.target.closest('.image-preview');
+                    imageDiv.remove();
+
+                    // Enviar para o backend para excluir a imagem do sistema
+                    const imageName = imageDiv.dataset.image;
+                    console.log('Excluir imagem do sistema:', imageName);
+                    // faz o request para /excluir_imagem com o path da imagem
+                    
+                    fetch('/excluir_imagem', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ image: imageName }),
+                    })
                 }
             });
         });

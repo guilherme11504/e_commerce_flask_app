@@ -10,7 +10,6 @@ controler = Controler()
 
 @totem_bp.route('/client_menu', methods=['GET'])
 def client_menu():
-    # Assumindo que a sessão possui o random_hash do totem (ou uma variável semelhante que identifique o vendedor)
     totem_hash = session.get('totem_hash')  # Exemplo de como você pode obter o vendedor_hash da sessão
     vendedor_token = controler.get_vendedor_totem(totem_hash)
     # Verificando se temos o random_hash do vendedor na sessão
@@ -23,4 +22,4 @@ def client_menu():
     produtos = controler.get_produtos_by_vendedor_hash(vendedor_token.user_id)
 
     # Renderizando a página com as variáveis vendedor e produtos
-    return render_template('totem_menu.html', vendedor=vendedor, produtos=produtos)
+    return render_template('client_menu.html', vendedor=vendedor, produtos=produtos)

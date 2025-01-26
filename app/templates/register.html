@@ -42,22 +42,24 @@
                 <input type="file" class="form-control" id="profile_picture" name="profile_picture">
             </div>
             <input type="hidden" name="user_type" value="{{ user_type }}">
-            {% if user_type == 'seller' %}
-            <div class="mb-3">
-                <label for="nome_usuario" class="form-label">Nome de Usuário</label>
-                <input type="text" class="form-control" id="nome_usuario" name="nome_usuario" required>
-            </div>
-            {% endif %}
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="senha" name="senha" required>
             </div>
             {% if user_type == 'seller' %}
             <div class="mb-3">
-                <label for="nome_food_truck" class="form-label">Nome do Food Truck</label>
-                <input type="text" class="form-control" id="nome_food_truck" name="nome_food_truck" required>
+                <label for="nome_loja" class="form-label">Nome do Food Truck</label>
+                <input type="text" class="form-control" id="nome_loja" name="nome_loja" required>
             </div>
             {% endif %}
+
+            <div class="mb-3">
+                <select name="categorias_select" id="categorias_select">
+                    {%for categoria in categorias_interna%}
+                    <option value="{{categoria.id}}">{{categoria.nome_categoria}}</option>
+                    {%endfor%}
+                </select>
+            </div>
             
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Cadastrar</button>

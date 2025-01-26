@@ -7,9 +7,13 @@ import qrcode
 import io
 import base64
 import random
+import mercadopago
+
 controler = Controler()
 
 payments_bp = Blueprint('payments_bp', __name__)
+
+sdk = mercadopago.SDK("APP_USR-8041984352821246-121422-a3147d932ebe09a272a87fa8094877bd-204338743")
 
 
 @payments_bp.route('/notification', methods=['POST'])
@@ -76,4 +80,37 @@ def finalizar_compra():
     data = request.json
     print(data)
     return jsonify(data), 200
+
+
+@payments_bp.route('/pagamento', methods=['GET'])
+def pagamento():
+    return render_template('payment_screen.html')
+
+@payments_bp.route('/process_payment', methods=['POST'])
+def make_payment():
+
+    data = request.json
+    print(data)
+    payment_data = {
+        "transaction_amount": float(data.get("transaction_amount")),
+        "token": data.get("token"),
+        "description": data.get("description"),
+        "installments": int(data.get("installments")),
+        "payment_method_id": data.get("payment_method_id"),
+        "payer": {
+            "email": data.get("cardholderEmail"),
+            "identification": {
+                "type": data.get("identificationType"),
+                "number": data.get("identificationNumber")
+            },
+            "first_name": data.get("cardholderName")
+        },
+    }
+
+    payment_response = sdk.payment().create(payment_data)
+    payment = payment_response["response"]
+
+    print(payment)
+
+
 

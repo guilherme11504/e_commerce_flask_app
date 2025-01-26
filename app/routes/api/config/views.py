@@ -4,6 +4,11 @@ from app.routes.api.config.controler import Controler
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
 import string
+import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 config_bp = Blueprint('config_bp', __name__)
 controler = Controler()
@@ -45,3 +50,62 @@ def register_totem():
             flash('Erro ao cadastrar totem!', 'danger')
 
     return render_template('register_totem.html')
+
+@config_bp.route('/callback', methods=['GET'])
+def callback():
+    from app import db
+    from app.models import MP_token, Vendedor
+    vendedor_hash = session.get('user_hash')
+    code = request.args.get('code')
+    client_id = os.getenv('APP_ID')
+    client_secret = os.getenv('ACCESS_TOKEN')
+    redirect_uri = os.getenv('REDIRECT_URI')
+
+    vendedor = Vendedor.query.filter_by(random_hash=vendedor_hash).first()
+
+    if not vendedor:
+        flash('Vendedor não encontrado!', 'danger')
+        return redirect(url_for('config_bp.config'))
+
+    response = requests.post(
+        'https://api.mercadopago.com/oauth/token',
+        headers={
+            'accept': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded'
+        },
+        data={
+            'client_secret': client_secret,
+            'grant_type': 'authorization_code',
+            'redirect_uri': redirect_uri,
+            'code': code,
+            'client_id': client_id
+        }
+    )
+
+    if response.status_code == 200:
+        data = response.json()
+        access_token = data.get('access_token')
+        token_type = data.get('token_type')
+        expires_in = data.get('expires_in')
+        user_id = data.get('user_id')
+
+        mp_token = MP_token(
+            vendedor_id=vendedor.random_hash,
+            access_token=access_token,
+            public_key=token_type,
+            refresh_token=token_type,
+            expires_in=expires_in,
+            user_id=user_id
+
+        )
+
+        db.session.add(mp_token)
+        db.session.commit()
+
+        flash('Token de acesso obtido com sucesso!', 'success')
+
+        return redirect(url_for('config_bp.config'))
+    else:
+        flash('Erro ao obter token de acesso!', 'danger')
+
+        return redirect(url_for('config_bp.config'))

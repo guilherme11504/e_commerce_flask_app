@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session,current_app, flash
 from app.routes.main.controler import Controler
 from app.models import *
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 controler = Controler()
 
@@ -30,7 +34,8 @@ def totem_home():
 @main_bp.route('/register', methods=['GET'])
 def register():
     user_type = request.args.get('user_type')
-    return render_template('register.html',user_type=user_type)
+    categorias_interna = Categoria_loja.query.all()
+    return render_template('register.html',user_type=user_type,categorias_interna=categorias_interna)
 
 @main_bp.route('/main', methods=['GET'])
 def main():
@@ -38,6 +43,12 @@ def main():
 
 @main_bp.route('/pedidos', methods=['GET'])
 def pedidos():
+    user_id = session['user_hash']
+    user_type = session['user_type']
+    pedidos = controler.getPedidos(user_id,user_type)
+    if pedidos:
+        return render_template('pedidos.html', pedidos=pedidos)
+    flash('Ocorreu um erro ao pegar seus pedidos tente novamente mais tarde')
     return render_template('pedidos.html')
 
 @main_bp.route('/produtos', methods=['GET'])
@@ -73,3 +84,23 @@ def editar_produto_page():
     categorias = controler.getCategories()
     produtos = controler.getallprodutos(user_hash)
     return render_template('edit_product.html',produto=product,categorias=categorias,produtos=produtos)
+
+@main_bp.route('/integrate_account', methods=['GET'])
+def integrate_account():
+    app_id = os.getenv('APP_ID')
+    return render_template('integrate_account.html')
+
+@main_bp.route('/descobrir_categorias', methods=['GET'])
+def descobrir_categorias():
+    categoria_id = request.args.get('categoria_id')
+    sellers, categoria = controler.get_sellers_by_internal_category(categoria_id)
+    if not sellers and not categoria:
+        flash('Nenhum vendedor encontrado nessa categoria')
+        return redirect(url_for('buyer_bp.buyer_home'))
+    else:
+        return render_template('search_categories.html', sellers=sellers, categoria=categoria)
+    
+
+
+    
+

@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 # Carregando dotenv para variáveis de ambiente
-load_dotenv()
+load_dotenv(override=True)
 
 
 # Variáveis de ambiente para conexão com o banco de dados
@@ -13,7 +13,7 @@ username = os.getenv('SQL_USERNAME')
 password = os.getenv('password')
 password_encoded = quote_plus(password)
 domain = "http://127.0.0.1:4000"
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
 
 class Config:
     SECRET_KEY = SECRET_KEY
